@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>todo</title>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="./vue.js"></script>
+</head>
+<body>
+	<div id="root">
+		<div>
+			<input v-model="inputValue">
+			<button @click="handleClick">提交</button>
+		</div>
+		<ul>
+			<todo-item 
+			v-for="(item,index) of list" 
+			:key="index"
+			:content="item"
+			:index="index"
+			@delete="handleDelete">
+				
+			</todo-item>
+		
+		</ul>
+	</div>
+	<script type="text/javascript">
+		//创建组件,通过vue.component创建全局组件
+		//todo-item子组件
+		Vue.component('todo-item',{
+			//我这个组件，接收外部传入的叫content的属性
+			props:['content','index'],
+			template:'<li @click="handleClick">{{content}}</li>',
+			methods:{
+				handleClick(){
+					this.$emit("delete",this.index)
+
+				}
+			}
+		})
+
+		//局部组件，不能直接在父模板中调用，必须再new vue中做一个组件的声明
+		/*var ToDoItem={
+			template:'<li>item</li>'
+
+		}*/
+		//点击提交，增加inputValue数据到list中，操作数据而不是操作dom
+
+		//实例有自己的模板，是挂载点下面的内容
+		new Vue({
+			el:"#root",
+			/*components:{
+				"todo-item":ToDoItem
+
+			},*/
+			data:{
+				inputValue:'',
+				list:[]
+			},
+			methods:{
+				handleClick(){
+					this.list.push(this.inputValue);
+					this.inputValue='';
+				},
+				handleDelete(index){
+					this.list.splice(index,1);
+
+				}
+			}
+		})
+	</script>
+</body>
+</html>
